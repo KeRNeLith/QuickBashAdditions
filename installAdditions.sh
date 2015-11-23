@@ -1,5 +1,4 @@
 #!/bin/bash
-//https://github.com/vmizoules/ImproveYourShell
 
 User=`whoami`
 Bashrc=".bashrc"
@@ -12,7 +11,7 @@ nbErrors=0
 
 MarkerBegin="#BashRcAdditionByKernelith"
 MarkerEnd="#End_of_BashRcAdditionByKernelith"
-BashAdditionScriptURL='---------http://git.io/vT9MS------------'
+BashAdditionScriptURL='https://goo.gl/XNYlYQ'
 
 function downloadBashAddition
 {
@@ -34,7 +33,7 @@ function installBashAddition
 	echo $MarkerEnd >> $PathBashrc
 	echo "	Creating '$BashrcAddition'"
 	# create .bash_addition
-	downloadBashCompletion
+	downloadBashAddition
 }
 
 function updateBashAddition 
