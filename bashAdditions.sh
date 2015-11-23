@@ -139,6 +139,7 @@ fi
 
 # ========== Prompt ==========
 # Add git branch if its present to PS1
+# Not used for the moment
 parse_git_branch() 
 {
 	git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
@@ -146,15 +147,7 @@ parse_git_branch()
 # Color prompt
 if [ "$color_prompt" = yes ]
 then
-	#Special color for root
-	if [ "$USER" = "root" ]
-	then
-		coloredPrompt='\[\033[1;31m\]\$ \[\033[00m\]'
-	else
-		coloredPrompt='\$ \[\033[00m\]'
-	fi
-
-	PS1="\n\[\e[30;1m\](\[\e[0m\]\`if [[ \$? == 0 ]]; then echo \"\[\e[32m\]^_^\[\e[0m\]\"; else echo \"\[\e[31m\]O_O\[\e[0m\]\"; fi\`\[\e[30;1m\])-\[\e[30;1m\](\[\e[34;1m\]\u@\h\[\e[30;1m\])-(\[\e[34;1m\]\j\[\e[30;1m\])\n(\[\e[32;1m\]\w\[\e[30;1m\]) $(parse_git_branch) -> \[\e[0m\]"$coloredPrompt
+	PS1="\n\[\e[30;1m\](\[\e[0m\]\`if [[ \$? == 0 ]]; then echo \"\[\e[32m\]^_^\[\e[0m\]\"; else echo \"\[\e[31m\]O_O\[\e[0m\]\"; fi\`\[\e[30;1m\])-\[\e[30;1m\](\[\e[34;1m\]\u@\h\[\e[30;1m\])-(\[\e[34;1m\]\j\[\e[30;1m\])\n(\[\e[32;1m\]\w\[\e[30;1m\])-> \[\e[0m\]"
 fi
 
 # ========== Read file for your personnal modification ==========
