@@ -5,15 +5,16 @@ Commandes
 --------
 
 Installation ou mise à jour :
-    bash <(curl -Ls http://git.io/vT9wm)
+
+    bash <(curl -Ls https://goo.gl/wA12tf)
 
 Suppression :
 
-    bash <(curl -Ls http://git.io/vTdtT)
+    bash <(curl -Ls https://goo.gl/9fb5eV)
 
 Juste pour la session actuelle : (Aucun fichier ne va être installé)
 
-    source <(curl -Ls http://git.io/vT9MS)
+    source <(curl -Ls https://goo.gl/XNYlYQ)
 
 Il est possible d'ajouter des nouvelles commandes spécifiques en créant le fichier : .bash_personnal_addition
 Dans le répertoire home de l'utilisateur.
