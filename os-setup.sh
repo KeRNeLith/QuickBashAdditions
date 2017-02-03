@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ROOT_DIR=$PWD
+
 # Script help
 function printHelp
 {
@@ -267,6 +269,7 @@ then
 	tar -zxvf $INSTALLERS_DIR/cmake-${CMAKE_VERSION}.tar.gz -C $SOFTWARES_DIRECTORY # Extraction
 	cd $SOFTWARES_DIRECTORY/cmake-${CMAKE_VERSION}
 	./bootstrap && make && sudo make install && cd .. && rm -rf cmake-*
+	cd $ROOT_DIR	# Back to root
 
 	echo "Installing Git features..."
 	# Git
@@ -310,6 +313,7 @@ then
 		cd build
 		cmake ..
 		make && sudo make install && cd ../.. && rm -rf SFML-*
+		cd $ROOT_DIR
 	fi
 
 	# Wine for PlayOnLinux :
@@ -344,6 +348,7 @@ then
 	cd $SOFTWARES_DIRECTORY/clion-*/bin
 	echo 'export PATH=$PATH:'$PWD >> "$HOME/.bash_personnal_addition"
 	source "$HOME/.bashrc"
+	cd $ROOT_DIR
 	ADDITIONAL_APPS="${ADDITIONAL_APPS}, 'application://jetbrains-clion.desktop'"
 
 	# Screen & render
