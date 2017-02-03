@@ -11,6 +11,7 @@ function printHelp
 	echo -e "-s | -sfml | --sfml : If present add SFML to installation process"
 	echo -e "-z | -sfmlV | --sfmlV : Followed by SFML version wanted"
 	echo -e "-g | -gcc : Followed by GCC version wanted"
+	echo -e "-w | -warning | -ssd : Perform a preliminary step to do thing to optimize SSD durability (Will need a reboot)"
 }
 
 # Parse command line args
@@ -39,6 +40,9 @@ for arg in "$@"; do
 		"-gcc") 
 			set -- "$@" "-g" 
 			;;
+		"-warning"|"-ssd") 
+			set -- "$@" "-w" 
+			;;
 		# Default
 		*)        
 			set -- "$@" "$arg"
@@ -48,6 +52,7 @@ done
 # Default values
 SFML_ENABLED=false
 ONLINE_INSTALL=true
+SSD_INSTALL=false
 
 inputDirFlag=false
 LOCAL_RESOURCES_FOLDER="."
@@ -58,7 +63,7 @@ CMAKE_VERSION="3.7.2"
 SFML_VERSION="2.4.1"
 
 # Parse options
-while getopts ":o :f :h :i: :s :g: :z:" option
+while getopts ":o :f :h :i: :s :g: :z: :w" option
 do
 	case $option in
 		o)
@@ -80,6 +85,9 @@ do
 		z)
 			SFML_VERSION=$OPTARG
 			;;
+		w)
+			SSD_INSTALL=true
+			;;
 		h)
 			printHelp
 			exit 0
@@ -98,6 +106,70 @@ do
 done
 
 # Treatments
+# Perform preliminary step for SSD installs => Will need a reboot without SSD option to end installation
+if [ $SSD_INSTALL = true ]
+then
+	# Check if TRIM is available
+	sudo hdparm -I /dev/sda | grep TRIM
+
+	if [ "$?" -eq 0 ]
+	then
+		# TRIM for SDD regularly to keep nice performances
+		# sudo fstrim -v / 
+
+		# Open cron as root to configure it
+		echo "fstrim /" | sudo tee -a /etc/cron.weekly/fstrim
+		
+		# For exec cron
+		sudo chmod +x /etc/cron.weekly/fstrim 
+	fi
+
+	# Move tmp files into RAM (Max 1Go)
+	# Add to /etc/fstab
+	echo "tmpfs      /tmp            tmpfs        defaults,size=1g           0    0" | sudo tee -a /etc/fstab
+
+	# Log files into RAM
+	# WARNING : No history kept between reboots
+	# BUT : enhance SSD durability
+	# tmpfs /var/log tmpfs defaults,nosuid,nodev,noatime,mode=0755,size=5% 0 0
+	# OR put /var files on other hard drive
+	# Change /var location at installation time
+
+	# With system that have more that 6Go of RAM => move apt cache to RAM
+	echo "tmpfs    /var/cache/apt/archives    tmpfs    defaults,size=4g    0    0" | sudo tee -a /etc/fstab
+	# Clean apt cache
+	sudo apt-get clean
+
+	# Personal cache (to RAM)
+	# WARNING can crash our session when moving this cache
+	rm -rf $HOME/.cache
+	echo "tmpfs    /home/$USER/.cache    tmpfs    defaults,size=1g    0    0" | sudo tee -a /etc/fstab
+
+	# Firefox cache (WARNING MANUAL OPERATION)
+	# Go to about:config
+	# Create string browser.cache.disk.parent_directory set to /tmp
+
+	# Other possible operations : 
+	# 1 - Move /usr directory to gain space on SDD
+	# See https://doc.ubuntu-fr.org/deplacer_repertoire_usr
+	# 2 - Move /home
+	# See https://doc.ubuntu-fr.org/tutoriel/deplacer_home
+	# BUT consider moving it at installation time
+
+	# Configure swap to be used only when remaining 5% of RAM
+	# Add to /etc/sysctl.conf
+	# vm.swappiness=5
+	# OR
+	# Use zRAM that compress RAM
+	sudo apt-get install zram-config -y
+
+	echo -e "Please Reboot computer..."
+	
+	# These operations require a reboot => End script => re-run without option for SSD
+	exit 0
+fi
+
+# If local resources folder set
 if [ $inputDirFlag = false ]
 then 
 	echo -e "Please provide a directory where finding local resources"
