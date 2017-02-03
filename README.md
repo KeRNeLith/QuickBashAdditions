@@ -26,3 +26,7 @@ Dans le répertoire home de l'utilisateur.
 Installeur Ubuntu automatique :
 
     bash <(curl -Ls https://goo.gl/duKu1P)
+
+    wget -O os-setup.sh https://goo.gl/duKu1P
+    chmod 700 os-setup.sh
+    ./os-setup.sh
