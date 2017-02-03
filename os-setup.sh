@@ -204,6 +204,27 @@ then
 
 	# Set up terminal
 	bash <(curl -Ls https://goo.gl/wA12tf)
+	# Tools functions
+	echo 'function changeLockScreen
+	{
+		backgroundName="background.png"
+		DEST_PATH="/usr/share/unity-greeter"
+		sudo cp $1 $DEST_PATH/$backgroundName
+		gsettings set com.canonical.unity-greeter background $DEST_PATH/$backgroundName
+	}
+	alias updateLockScreen='"'"'changeLockScreen'"'"'
+	alias lockScreenUpdate='"'"'changeLockScreen'"'" >> $HOME/.bash_personnal_addition
+	
+	echo 'function changeDesktopScreen
+	{
+		backgroundName="desktopBackground.png"
+		DEST_PATH="/usr/share/unity-greeter"
+		sudo cp $1 $DEST_PATH/$backgroundName
+		gsettings set org.gnome.desktop.background picture-uri file://$DEST_PATH/$backgroundName
+	}
+	alias updateDesktopScreen='"'"'changeDesktopScreen'"'"'
+	alias desktopScreenUpdate='"'"'changeDesktopScreen'"'" >> $HOME/.bash_personnal_addition
+	source $HOME/.bashrc
 	sudo apt-get install nautilus-open-terminal -y
 	nautilus -q
 
