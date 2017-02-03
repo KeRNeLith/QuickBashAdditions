@@ -1,8 +1,10 @@
-# QuickBashAdditions
+# Quick Linux Setup
 Ensemble de scripts permettant d'ajouter des commandes bash pratiques.
 
 Commandes
 --------
+
+### Bash Modifications
 
 Installation ou mise à jour :
 
@@ -18,3 +20,9 @@ Juste pour la session actuelle : (Aucun fichier ne va être installé)
 
 Il est possible d'ajouter des nouvelles commandes spécifiques en créant le fichier : .bash_personnal_addition
 Dans le répertoire home de l'utilisateur.
+
+### Ubuntu Setup
+
+Installeur Ubuntu automatique :
+
+    bash <(curl -Ls https://goo.gl/duKu1P)

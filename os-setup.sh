@@ -86,6 +86,7 @@ then
 		# Config
 		git config --global user.email "kernelith@live.fr"
 		git config --global user.name "Alexandre Raberin"
+		git config --global push.default simple
 
 		echo "Installing dev. tools..."
 		# Valgrind
