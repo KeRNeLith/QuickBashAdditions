@@ -31,4 +31,4 @@ OR
 
     wget -O os-setup.sh https://goo.gl/duKu1P
     chmod 700 os-setup.sh
-    ./os-setup.sh
+    ./os-setup.sh -input DIRECTORY
