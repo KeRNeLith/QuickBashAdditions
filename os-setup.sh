@@ -316,24 +316,14 @@ then
 	
 	ADDITIONAL_APPS="${ADDITIONAL_APPS}, 'application://atom.desktop'"
 	
-	# Installation de logiciels à partir de .deb
-	#sudo dpkg -i $USB_INSTALLER/atom.deb
-	#echo "installation Slack :"
-	#sudo dpkg -i $USB_INSTALLER/slack-desktop-2.0.6-amd64.deb
-	#echo "installation Virtualbox :"
-	#sudo dpkg -i $USB_INSTALLER/virtualbox-5.0_5.0.16-105871-Debian-jessie_amd64.deb
-	#echo "installation GanttProject"
-	#sudo dpkg -i $USB_INSTALLER/ganttproject_2.7.1-r1924-1_all.deb
-	#echo "installation PlayOnLinux"
-	#sudo dpkg -i $USB_INSTALLER/PlayOnLinux_4.2.10.deb
-
-	#echo "installation de Clion :"
-	#tar -zxvf $USB_INSTALLER/CLion-2016.2.2.tar.gz -C $SOFTWARE_DIRECTORY
-	#ADDITIONAL_APPS="${ADDITIONAL_APPS}, 'application://atom.desktop'"
-	#echo "installation de IntellIJ :"
-	#tar -zxvf $USB_INSTALLER/ideaIU-2016.3.tar.gz -C $SOFTWARE_DIRECTORY
-	#echo "installation de WebStorm :"
-	#tar -zxvf $USB_INSTALLER/WebStorm-2016.2.4.tar.gz -C $SOFTWARE_DIRECTORY
+	# Softwares Installs
+	# Jetbrains
+	echo "Installing CLion..."
+	tar -zxvf $INSTALLERS_DIR/CLion-*.tar.gz -C $SOFTWARES_DIRECTORY # Extraction
+	cd $SOFTWARES_DIRECTORY/clion-*/bin
+	echo 'export PATH=$PATH:'$PWD >> "$HOME/.bash_personnal_addition"
+	source "$HOME/.bashrc"
+	ADDITIONAL_APPS="${ADDITIONAL_APPS}, 'application://jetbrains-clion.desktop'"
 
 	# Screen & render
 	echo "Configure login screen..."
