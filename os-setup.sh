@@ -13,7 +13,7 @@ function printHelp
 	echo -e "-s | -sfml | --sfml : If present add SFML to installation process"
 	echo -e "-z | -sfmlV | --sfmlV : Followed by SFML version wanted"
 	echo -e "-g | -gcc : Followed by GCC version wanted"
-	echo -e "-w | -warning | -ssd : Perform a preliminary step to do thing to optimize SSD durability (Will need a reboot)"
+	echo -e "-w | -warning | -ssd : Perform a preliminary step to do thing to optimize SSD durability (Will need a reboot). This option should be followed with SSD partition name"
 }
 
 # Parse command line args
@@ -55,6 +55,7 @@ done
 SFML_ENABLED=false
 ONLINE_INSTALL=true
 SSD_INSTALL=false
+SSD_PARTITION="sda"
 
 inputDirFlag=false
 LOCAL_RESOURCES_FOLDER="."
@@ -65,7 +66,7 @@ CMAKE_VERSION="3.7.2"
 SFML_VERSION="2.4.1"
 
 # Parse options
-while getopts ":o :f :h :i: :s :g: :z: :w" option
+while getopts ":o :f :h :i: :s :g: :z: :w:" option
 do
 	case $option in
 		o)
@@ -89,6 +90,7 @@ do
 			;;
 		w)
 			SSD_INSTALL=true
+			SSD_PARTITION=${OPTARG}
 			;;
 		h)
 			printHelp
@@ -112,7 +114,7 @@ done
 if [ $SSD_INSTALL = true ]
 then
 	# Check if TRIM is available
-	sudo hdparm -I /dev/sda | grep TRIM
+	sudo hdparm -I /dev/${SSD_PARTITION} | grep TRIM
 
 	if [ "$?" -eq 0 ]
 	then
