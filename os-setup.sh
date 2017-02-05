@@ -215,7 +215,7 @@ then
 		backgroundName=$(basename "$1")
 		DEST_PATH="/usr/share/backgrounds/"
 		SCHEMAS_PATH="/usr/share/glib-2.0/schemas/"
-		sudo cp $backgroundName $DEST_PATH$backgroundName
+		sudo cp $1 $DEST_PATH$backgroundName
 		gsettings set com.canonical.unity-greeter background $DEST_PATH$backgroundName
 		replaceContent="#background\nbackground='"'"'${DEST_PATH}${backgroundName}'"'"'\n#background_end"
 		sudo sed -i "/^#background$/,/^#background_end$/c${replaceContent}" ${SCHEMAS_PATH}10_unity_greeter_background.gschema.override 
