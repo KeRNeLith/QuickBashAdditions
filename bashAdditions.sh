@@ -119,6 +119,76 @@ alias dodo='kill -9 -1'
 alias cgrep='grep --color=auto'
 alias webshare='python -m SimpleHTTPServer'
 
+# Tools function for key generations
+function generateSSHKey
+{
+	fileName="sshKey"
+	keyName=$fileName
+
+	local OPTIND
+	while getopts ":n: :f: :h" option
+	do
+		case $option in
+			n)
+				keyName=$OPTARG
+				;;
+			f)
+				fileName=$OPTARG
+				;;
+			h)
+				echo -e "Commands arguments help :"
+				echo -e "-h : Show help"
+				echo -e "-f : SSH key file names"
+				echo -e "-n : SSH key names"
+				return 0
+				;;
+			# Missing argument for option
+			:)
+				echo -e "Option \"${OPTARG}\" require argument"
+				return 1
+				;;
+			# Inexistant option
+			\?)
+				echo -e "Invalid option \"${OPTARG}\""
+				return 1
+				;;
+		esac
+	done
+	
+	mkdir -p $HOME/.ssh
+
+	# Generate key
+	ssh-keygen -t rsa -C $keyName -b 4096 -f $HOME/.ssh/$fileName
+	
+	echo -e "The public key is :\n" 
+	cat $HOME/.ssh/${fileName}.pub
+}
+
+function generateKey
+{
+	keyName="sshKey"
+
+	# Check if there are args
+	if [ $# -gt 0 ]
+	then
+		keyName=$1
+	fi
+
+	mkdir -p $HOME/.ssh
+
+	# Generate key
+	openssl genrsa -des3 -out ${keyName}private.pem 2048
+	
+	echo -e "Now generating public key :\n"
+	openssl rsa -in ${keyName}private.pem -outform PEM -pubout -out ${keyName}public.pem
+
+	# Move key
+	mv ${keyName}private.pem $HOME/.ssh
+	
+	echo -e "The public key is :\n" 
+	cat ${keyName}public.pem
+}
+
 # ========== Shell options ==========
 if test `echo $BASH_VERSION | grep "^[3-9].*"`
 then
