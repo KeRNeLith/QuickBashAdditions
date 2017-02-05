@@ -14,6 +14,8 @@ function printHelp
 	echo -e "-z | -sfmlV | --sfmlV : Followed by SFML version wanted"
 	echo -e "-g | -gcc : Followed by GCC version wanted"
 	echo -e "-w | -warning | -ssd : Perform a preliminary step to do thing to optimize SSD durability (Will need a reboot). This option should be followed with SSD partition name"
+	echo -e "-c | -clion : If present add CLion to installation process"
+	echo -e "-j | -intellij : If present add IntelliJ to installation process"
 }
 
 # Parse command line args
@@ -42,6 +44,12 @@ for arg in "$@"; do
 		"-gcc") 
 			set -- "$@" "-g" 
 			;;
+		"-clion") 
+			set -- "$@" "-c" 
+			;;
+		"-intellij") 
+			set -- "$@" "-j" 
+			;;
 		"-warning"|"-ssd") 
 			set -- "$@" "-w" 
 			;;
@@ -53,6 +61,8 @@ done
 
 # Default values
 SFML_ENABLED=false
+CLION_ENABLED=false
+INTELLIJ_ENABLED=false
 ONLINE_INSTALL=true
 SSD_INSTALL=false
 SSD_PARTITION="sda"
@@ -66,7 +76,7 @@ CMAKE_VERSION="3.7.2"
 SFML_VERSION="2.4.1"
 
 # Parse options
-while getopts ":o :f :h :i: :s :g: :z: :w:" option
+while getopts ":o :f :h :i: :s :g: :z: :w: :c :j" option
 do
 	case $option in
 		o)
@@ -91,6 +101,12 @@ do
 		w)
 			SSD_INSTALL=true
 			SSD_PARTITION=${OPTARG}
+			;;
+		c)
+			CLION_ENABLED=true
+			;;
+		j)
+			INTELLIJ_ENABLED=true
 			;;
 		h)
 			printHelp
@@ -350,13 +366,36 @@ then
 	
 	# Softwares Installs
 	# Jetbrains
-	echo "Installing CLion..."
-	tar -zxvf $INSTALLERS_DIR/CLion-*.tar.gz -C $SOFTWARES_DIRECTORY # Extraction
-	cd $SOFTWARES_DIRECTORY/clion-*/bin
-	echo 'export PATH=$PATH:'$PWD >> "$HOME/.bash_personnal_addition"
-	source "$HOME/.bashrc"
-	cd $ROOT_DIR
-	ADDITIONAL_APPS="${ADDITIONAL_APPS}, 'application://jetbrains-clion.desktop'"
+	if [ $CLION_ENABLED = true ]
+	then
+		echo "Installing CLion..."
+		tar -zxvf $INSTALLERS_DIR/CLion-*.tar.gz -C $SOFTWARES_DIRECTORY # Extraction
+		cd $SOFTWARES_DIRECTORY/clion-*/bin
+		echo 'export PATH=$PATH:'$PWD >> "$HOME/.bash_personnal_addition"
+		source "$HOME/.bashrc"
+		cd $ROOT_DIR
+		ADDITIONAL_APPS="${ADDITIONAL_APPS}, 'application://jetbrains-clion.desktop'"
+	fi
+	
+	if [ $INTELLIJ_ENABLED = true ]
+	then
+		echo "Installing IntelliJ..."
+		tar -zxvf $INSTALLERS_DIR/ideaIU-*.tar.gz -C $SOFTWARES_DIRECTORY # Extraction
+		cd $SOFTWARES_DIRECTORY/idea-IU-*/bin
+		echo 'export PATH=$PATH:'$PWD >> "$HOME/.bash_personnal_addition"
+		source "$HOME/.bashrc"
+		cd $ROOT_DIR
+		ADDITIONAL_APPS="${ADDITIONAL_APPS}, 'application://jetbrains-idea.desktop'"
+	fi
+	
+	# Auto activate Num lock
+	sudo apt-get install -y numlockx # Under Ubuntu 16.04 cause OS to never restart if forgotten
+	# For Ubuntu after 14.04
+	echo -e "[SeatDefaults]\ngreeter-setup-script=/usr/bin/numlockx on" | sudo tee -a "/usr/share/lightdm/lightdm.conf.d/50-unity-greeter.conf"
+
+	# LightDM related
+	# Disable guest login
+	echo -e "[SeatDefaults]\nallow-guest=false" | sudo tee -a "/etc/lightdm/lightdm.conf.d/disable-guest.conf"
 
 	# Screen & render
 	echo "Configure login & lock screen..."
