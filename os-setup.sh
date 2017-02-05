@@ -211,10 +211,15 @@ then
 	# Tools functions
 	echo 'function changeLockScreen
 	{
-		backgroundName="background.png"
-		DEST_PATH="/usr/share/unity-greeter"
-		sudo cp $1 $DEST_PATH/$backgroundName
-		gsettings set com.canonical.unity-greeter background $DEST_PATH/$backgroundName
+		#backgroundName="background.png"
+		backgroundName=$(basename "$1")
+		DEST_PATH="/usr/share/backgrounds/"
+		SCHEMAS_PATH="/usr/share/glib-2.0/schemas/"
+		sudo cp $backgroundName $DEST_PATH$backgroundName
+		gsettings set com.canonical.unity-greeter background $DEST_PATH$backgroundName
+		replaceContent="#background\nbackground='"'"'${DEST_PATH}${backgroundName}'"'"'\n#background_end"
+		sudo sed -i "/^#background$/,/^#background_end$/c${replaceContent}" ${SCHEMAS_PATH}10_unity_greeter_background.gschema.override 
+		sudo glib-compile-schemas $SCHEMAS_PATH
 	}
 	alias updateLockScreen='"'"'changeLockScreen'"'"'
 	alias lockScreenUpdate='"'"'changeLockScreen'"'" >> $HOME/.bash_personnal_addition
@@ -354,14 +359,14 @@ then
 	ADDITIONAL_APPS="${ADDITIONAL_APPS}, 'application://jetbrains-clion.desktop'"
 
 	# Screen & render
-	echo "Configure login screen..."
-	# Login screen
+	echo "Configure login & lock screen..."
+	# Lock screen
 	# Settings		
 	gsettings set com.canonical.unity-greeter draw-grid false
 	gsettings set com.canonical.unity-greeter draw-user-backgrounds false
 	gsettings set com.canonical.unity-greeter play-ready-sound false
 	gsettings set com.canonical.unity-greeter background-logo ""
-	DEST_PATH="/usr/share/unity-greeter/"
+	DEST_PATH="/usr/share/backgrounds/"
 	if [ ${ONLINE_INSTALL} = true ]
 	then
 		# Get images
@@ -378,6 +383,12 @@ then
 	gsettings set com.canonical.unity-greeter logo "${DEST_PATH}$logoName"
 	# Custom launcher bar
 	gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://gnome-terminal.desktop', 'application://nautilus.desktop', 'application://firefox.desktop'${ADDITIONAL_APPS}, 'application://libreoffice-writer.desktop', 'application://unity-control-center.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices']"
+
+	# Config Login screen
+	SCHEMAS_PATH="/usr/share/glib-2.0/schemas/"
+	echo -e "[com.canonical.unity-greeter]\ndraw-grid=false\ndraw-user-backgrounds=false\nplay-ready-sound=false\nbackground-logo=''\n#background\nbackground='${DEST_PATH}$backgroundName'\n#background_end\nlogo='${DEST_PATH}$logoName'" | sudo tee ${SCHEMAS_PATH}10_unity_greeter_background.gschema.override
+	# Recompile with new values
+	sudo glib-compile-schemas $SCHEMAS_PATH
 else
 	echo "Given path does not match a valid folder..."
 fi
