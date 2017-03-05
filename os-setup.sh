@@ -16,6 +16,7 @@ function printHelp
 	echo -e "-w | -warning | -ssd : Perform a preliminary step to do thing to optimize SSD durability (Will need a reboot). This option should be followed with SSD partition name"
 	echo -e "-c | -clion : If present add CLion to installation process"
 	echo -e "-j | -intellij : If present add IntelliJ to installation process"
+	echo -e "-k | -keepass : If present add Keepass2 to installation process"
 }
 
 # Parse command line args
@@ -50,6 +51,9 @@ for arg in "$@"; do
 		"-intellij") 
 			set -- "$@" "-j" 
 			;;
+		"-keepass") 
+			set -- "$@" "-k" 
+			;;
 		"-warning"|"-ssd") 
 			set -- "$@" "-w" 
 			;;
@@ -63,6 +67,7 @@ done
 SFML_ENABLED=false
 CLION_ENABLED=false
 INTELLIJ_ENABLED=false
+KEEPASS_ENABLED=false
 ONLINE_INSTALL=true
 SSD_INSTALL=false
 SSD_PARTITION="sda"
@@ -76,7 +81,7 @@ CMAKE_VERSION="3.7.2"
 SFML_VERSION="2.4.1"
 
 # Parse options
-while getopts ":o :f :h :i: :s :g: :z: :w: :c :j" option
+while getopts ":o :f :h :i: :s :g: :z: :w: :c :j :k" option
 do
 	case $option in
 		o)
@@ -107,6 +112,9 @@ do
 			;;
 		j)
 			INTELLIJ_ENABLED=true
+			;;
+		k)
+			KEEPASS_ENABLED=true
 			;;
 		h)
 			printHelp
@@ -386,6 +394,56 @@ then
 		source "$HOME/.bashrc"
 		cd $ROOT_DIR
 		ADDITIONAL_APPS="${ADDITIONAL_APPS}, 'application://jetbrains-idea.desktop'"
+	fi
+	
+	# Keepass 2
+	if [ $KEEPASS_ENABLED = true ]
+	then
+		echo "Installing Keepass2..."
+		tar -zxvf $INSTALLERS_DIR/keepass.tar.gz -C $SOFTWARES_DIRECTORY # Extraction
+		cd $SOFTWARES_DIRECTORY/Keepass2
+		echo 'export PATH=$PATH:'$PWD >> "$HOME/.bash_personnal_addition"
+		cd $ROOT_DIR
+
+		# For execution
+		sudo apt-get install mono-complete -y
+
+		# For auto type
+		# Enable auto typing feature
+		sudo apt-get install xdotool -y
+
+		# Tool to add shortcut command line
+		sudo apt-get install xbindkeys -y
+
+		# Create default settings file
+		xbindkeys --defaults > $HOME/.xbindkeysrc
+
+		# Configure auto type shortcut
+		printf '#autoType\n"mono '"${SOFTWARES_DIRECTORY}/Keepass2/KeePass.exe"' --auto-type"\nControl+Alt+Mod2 + a\n#autoType_end' >> $HOME/.xbindkeysrc
+
+		# Make shortcut permanent
+		echo xbindkeys >> "$HOME/.Xsession"
+
+		# Re-run xbindkeys
+		killall xbindkeys ; xbindkeys
+
+		# Tools commands
+		echo 'function updateKeepassPath
+		{
+			DEST_PATH=$1
+			content="\"mono ${DEST_PATH}/KeePass.exe --auto-type\"\nControl+Alt+Mod2 + a"
+			replaceContent="#autoType\n${content}\n#autoType_end"
+			sed -i "/^#autoType$/,/^#autoType_end$/c${replaceContent}" "$HOME/.xbindkeysrc"
+
+			killall xbindkeys ; xbindkeys
+		}
+		alias changeKeepassPath='"'"'updateKeepassPath'"'"'
+		alias changeKeepassPathLocal='"'"'updateKeepassPath $PWD'"'"'
+		alias updateKeepassPathLocal='"'"'changeKeepassPathLocal'"'" >> $HOME/.bash_personnal_addition
+
+		source "$HOME/.bashrc"
+
+		echo "Remember to install Keepass Helper extension for Firefox, Google Chrome or other browser..."
 	fi
 	
 	# Auto activate Num lock
