@@ -76,8 +76,8 @@ inputDirFlag=false
 LOCAL_RESOURCES_FOLDER="."
 
 # Versions
-COMPILER_VERSION=6
-CMAKE_VERSION="3.7.2"
+COMPILER_VERSION=8
+CMAKE_VERSION="3.14.0"
 SFML_VERSION="2.4.1"
 
 # Parse options
@@ -218,7 +218,8 @@ then
 	# For Java
 	sudo add-apt-repository ppa:webupd8team/java -y
 	# For GCC
-	sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+	#sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+	sudo add-apt-repository ppa:jonathonf/gcc-8.0 -y
 	# For Atom		
 	sudo add-apt-repository ppa:webupd8team/atom -y
 	# For Play on Linux (maybe not needed)
