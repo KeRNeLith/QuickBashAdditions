@@ -8,27 +8,27 @@ Commandes
 
 Installation ou mise à jour :
 
-    bash <(curl -Ls https://goo.gl/wA12tf)
+    bash <(curl -Ls https://bit.ly/2U2uVke)
 
 Suppression :
 
-    bash <(curl -Ls https://goo.gl/9fb5eV)
+    bash <(curl -Ls https://bit.ly/2HKyPHU)
 
 Juste pour la session actuelle : (Aucun fichier ne va être installé)
 
-    source <(curl -Ls https://goo.gl/XNYlYQ)
+    source <(curl -Ls https://bit.ly/2HKzc5g)
 
 Il est possible d'ajouter des nouvelles commandes spécifiques en créant le fichier : .bash_personnal_addition
 Dans le répertoire home de l'utilisateur.
 
 ### Ubuntu Setup
 
-Installeur Ubuntu automatique :
+Installeur Ubuntu16 automatique :
 
-    bash <(curl -Ls https://goo.gl/duKu1P)
+    bash <(curl -Ls https://bit.ly/2HRQ8pL)
 
 OR
 
-    wget -O os-setup.sh https://goo.gl/duKu1P
+    wget -O os-setup.sh https://bit.ly/2HRQ8pL
     chmod 700 os-setup.sh
     ./os-setup.sh -input DIRECTORY
