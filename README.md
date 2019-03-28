@@ -32,3 +32,13 @@ OR
     wget -O os-setup.sh https://bit.ly/2HRQ8pL
     chmod 700 os-setup.sh
     ./os-setup.sh -input DIRECTORY
+
+Installeur Ubuntu18 automatique :
+
+    bash <(curl -Ls https://bit.ly/2U2xdQk)
+
+OR
+
+    wget -O os-setup.sh https://bit.ly/2U2xdQk
+    chmod 700 os-setup.sh
+    ./os-setup.sh -input DIRECTORY
